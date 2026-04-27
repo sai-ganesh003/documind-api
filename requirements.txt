@@ -62,7 +62,6 @@ python-dateutil==2.9.0.post0
 python-dotenv==1.2.2
 python-jose==3.5.0
 python-multipart==0.0.26
-pywin32==311
 qdrant-client==1.17.1
 redis==7.4.0
 requests==2.33.1
