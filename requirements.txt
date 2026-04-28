@@ -16,7 +16,9 @@ click-plugins==1.1.1.2
 click-repl==0.3.0
 colorama==0.4.6
 cryptography==47.0.0
+dnspython==2.8.0
 ecdsa==0.19.2
+email-validator==2.3.0
 fastapi==0.136.1
 google-ai-generativelanguage==0.6.15
 google-api-core==2.30.3
@@ -62,6 +64,7 @@ python-dateutil==2.9.0.post0
 python-dotenv==1.2.2
 python-jose==3.5.0
 python-multipart==0.0.26
+pywin32==311
 qdrant-client==1.17.1
 redis==7.4.0
 requests==2.33.1
@@ -79,3 +82,4 @@ urllib3==2.6.3
 uvicorn==0.46.0
 vine==5.1.0
 wcwidth==0.6.0
+pydantic[email]
