@@ -1,1 +1,4 @@
 .github/ 
+venv/ 
+__pycache__/ 
+*.pyc 
