@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from app.models.user import Base
 from app.models.document import Document
 from app.db.session import engine
-from app.api.routes import auth, documents
+from app.api.routes import auth, documents, query
 
 app = FastAPI(
     title="DocuMind API",
@@ -17,6 +17,7 @@ async def startup():
 
 app.include_router(auth.router)
 app.include_router(documents.router)
+app.include_router(query.router)
 
 @app.get("/health")
 async def health():
