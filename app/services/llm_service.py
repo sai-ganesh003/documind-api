@@ -1,25 +1,37 @@
-import google.generativeai as genai
+import requests
+import hashlib
 from app.config import settings
 
-genai.configure(api_key=settings.GEMINI_API_KEY)
-
 def embed_text(text: str) -> list[float]:
-    result = genai.embed_content(
-        model="models/text-embedding-004",
-        content=text
-    )
-    return result["embedding"]
+    hash_val = hashlib.md5(text.encode()).digest()
+    embedding = []
+    for i in range(768):
+        byte_val = hash_val[i % 16]
+        embedding.append((byte_val - 128) / 128.0)
+    return embedding
 
 def generate_answer(context: str, question: str) -> str:
-    model = genai.GenerativeModel("gemini-1.5-flash")
-    prompt = f"""You are a helpful assistant. Answer the question based only on the context provided below.
-
-Context:
-{context}
-
-Question:
-{question}
-
-Answer:"""
-    response = model.generate_content(prompt)
-    return response.text
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {settings.GROQ_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    context = context[:3000]
+    payload = {
+        "model": "llama-3.3-70b-versatile",
+        "messages": [
+            {
+                "role": "system",
+                "content": "You are a helpful assistant. Answer questions based only on the provided context."
+            },
+            {
+                "role": "user",
+                "content": f"Context:\n{context}\n\nQuestion: {question}"
+            }
+        ],
+        "max_tokens": 500
+    }
+    response = requests.post(url, headers=headers, json=payload)
+    print(f"GROQ RESPONSE: {response.status_code} {response.text[:500]}")
+    response.raise_for_status()
+    return response.json()["choices"][0]["message"]["content"]

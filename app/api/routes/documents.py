@@ -8,6 +8,7 @@ from app.core.dependencies import get_current_user
 from app.models.user import User
 from app.models.document import Document, DocumentStatus
 from app.schemas.document import DocumentUploadResponse, DocumentListResponse
+from app.workers.tasks import process_document_task
 
 router = APIRouter(prefix="/documents", tags=["documents"])
 
@@ -39,6 +40,8 @@ async def upload_document(
     db.add(document)
     await db.commit()
     await db.refresh(document)
+
+    process_document_task.delay(document.id, file_path)
 
     return DocumentUploadResponse(
         id=document.id,

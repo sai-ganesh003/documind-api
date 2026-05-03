@@ -28,6 +28,7 @@ services:
       - redis
     volumes:
       - .:/app
+      - uploads_data:/app/uploads
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
   worker:
@@ -38,8 +39,9 @@ services:
       - db
       - redis
     volumes:
-      - .:/app
+      - uploads_data:/app/uploads
     command: celery -A app.celery_app worker --loglevel=info
 
 volumes:
   postgres_data:
+  uploads_data:
