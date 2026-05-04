@@ -1,3 +1,4 @@
+aiosqlite==0.22.1
 alembic==1.18.4
 amqp==5.3.1
 annotated-doc==0.0.4
@@ -51,6 +52,7 @@ portalocker==3.2.0
 prompt_toolkit==3.0.52
 proto-plus==1.27.2
 protobuf==5.29.6
+psycopg2-binary==2.9.12
 pyasn1==0.6.3
 pyasn1_modules==0.4.2
 pycparser==3.0
@@ -66,6 +68,7 @@ python-dateutil==2.9.0.post0
 python-dotenv==1.2.2
 python-jose==3.5.0
 python-multipart==0.0.26
+pywin32==311
 qdrant-client==1.17.1
 redis==7.4.0
 requests==2.33.1
@@ -86,4 +89,3 @@ uvicorn==0.46.0
 vine==5.1.0
 wcwidth==0.6.0
 websockets==16.0
-psycopg2-binary==2.9.9
