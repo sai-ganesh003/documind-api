@@ -8,7 +8,11 @@ I built this project to learn how RAG (Retrieval-Augmented Generation) systems w
 
 1. You register and login to get a JWT token
 2. Upload a PDF — it gets saved and a background job (Celery) picks it up
-3. The worker chunks the PDF into small pieces and stores them as vectors in Qdrant
+3. The worker extracts text from the PDF and splits it into chunks of 500 words
+   with a 50-word overlap between consecutive chunks. Overlap is intentional —
+   it prevents context from being cut off at chunk boundaries, so a sentence
+   that spans two chunks is still fully captured in at least one of them.
+   Each chunk is then converted into a 768-dimensional vector using an embedding model.
 4. When you ask a question, it finds the most relevant chunks and sends them to an LLM
 5. The LLM reads those chunks and returns a grounded answer
 
@@ -23,6 +27,21 @@ I built this project to learn how RAG (Retrieval-Augmented Generation) systems w
 - Docker Compose for local dev
 - GitHub Actions CI — 14 pytest tests passing
 - Deployed on Render
+
+
+## Chunking Strategy
+
+PDFs are split into chunks of **500 words** with a **50-word overlap**.
+
+Why 500 words? Large enough to carry meaningful context, small enough that
+the most relevant chunk stays focused when retrieved.
+
+Why 50-word overlap? If a key sentence falls at the boundary between two
+chunks, the overlap ensures it appears fully in at least one chunk. Without
+overlap, split boundaries can destroy the meaning of a passage.
+
+The chunking logic is word-based (not character-based) so chunk sizes stay
+semantically consistent regardless of word length variation in the document.
 
 ## Run locally
 
