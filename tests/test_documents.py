@@ -40,3 +40,20 @@ async def test_list_documents(client, auth_headers):
 async def test_document_status_not_found(client, auth_headers):
     response = await client.get("/documents/99999/status", headers=auth_headers)
     assert response.status_code == 404
+
+async def test_upload_empty_pdf(client, auth_headers):
+    """Empty PDF file should be rejected"""
+    response = await client.post(
+        "/documents/upload",
+        files={"file": ("empty.pdf", io.BytesIO(b""), "application/pdf")},
+        headers=auth_headers
+    )
+    assert response.status_code == 400
+
+async def test_upload_no_file(client, auth_headers):
+    """Request with no file at all should fail gracefully"""
+    response = await client.post(
+        "/documents/upload",
+        headers=auth_headers
+    )
+    assert response.status_code == 422

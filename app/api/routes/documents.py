@@ -24,11 +24,14 @@ async def upload_document(
     if not file.filename.endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files allowed")
 
+    content = await file.read()
+    if len(content) == 0:
+        raise HTTPException(status_code=400, detail="Uploaded file is empty")
+
     task_id = str(uuid.uuid4())
     file_path = os.path.join(UPLOAD_DIR, f"{task_id}_{file.filename}")
 
     with open(file_path, "wb") as f:
-        content = await file.read()
         f.write(content)
 
     document = Document(
