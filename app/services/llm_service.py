@@ -31,7 +31,18 @@ def generate_answer(context: str, question: str) -> str:
         ],
         "max_tokens": 500
     }
-    response = requests.post(url, headers=headers, json=payload)
-    print(f"GROQ RESPONSE: {response.status_code} {response.text[:500]}")
+
+    try:
+        response = requests.post(url, headers=headers, json=payload, timeout=30)
+    except requests.exceptions.Timeout:
+        raise RuntimeError("LLM service timed out. Please try again.")
+    except requests.exceptions.ConnectionError:
+        raise RuntimeError("Could not connect to LLM service. Please try again later.")
+
+    if response.status_code == 429:
+        raise RuntimeError("LLM rate limit reached. Please wait a moment and try again.")
+    if response.status_code >= 500:
+        raise RuntimeError("LLM service is currently unavailable. Please try again later.")
+
     response.raise_for_status()
     return response.json()["choices"][0]["message"]["content"]

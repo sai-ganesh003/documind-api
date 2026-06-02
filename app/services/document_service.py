@@ -22,6 +22,8 @@ def chunk_text(text: str, chunk_size: int = 500, overlap: int = 50) -> list[str]
 def process_document(document_id: int, file_path: str):
     ensure_collection()
     text = extract_text_from_pdf(file_path)
+    if not text.strip():
+        raise ValueError("PDF contains no extractable text. It may be a scanned or image-only PDF.")
     chunks = chunk_text(text)
     embeddings = [embed_text(chunk) for chunk in chunks]
     upsert_chunks(document_id, chunks, embeddings)
