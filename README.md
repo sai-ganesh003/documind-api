@@ -43,6 +43,28 @@ overlap, split boundaries can destroy the meaning of a passage.
 The chunking logic is word-based (not character-based) so chunk sizes stay
 semantically consistent regardless of word length variation in the document.
 
+
+## Limitations & Known Issues
+
+- Scanned PDFs not supported — PDFs that are image-only with no embedded text
+  will be rejected. OCR support is not implemented.
+
+- Embedding model is deterministic hash-based — the current embed_text function
+  uses an MD5 hash as a mock embedding. In production this should be replaced with
+  a real embedding model (e.g. sentence-transformers or OpenAI embeddings) for
+  accurate semantic search.
+
+- Free tier dependencies — Aiven PostgreSQL and Qdrant Cloud free tiers may
+  auto-pause after inactivity. The live demo at the Render URL may take 30-60
+  seconds to cold start.
+
+- No file size limit — very large PDFs are accepted but may cause slow
+  processing or memory pressure on the Celery worker.
+
+- Single collection in Qdrant — all documents share one Qdrant collection,
+  filtered by document_id. At scale, per-user collections would be more appropriate.
+
+
 ## Run locally
 
 
