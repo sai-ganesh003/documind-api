@@ -1,23 +1,23 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, ConfigDict
 from datetime import datetime
 from app.models.document import DocumentStatus
 
 class DocumentUploadResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     filename: str
     status: DocumentStatus
     task_id: str
     created_at: datetime
-    class Config:
-        from_attributes = True
 
 class DocumentListResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     filename: str
     status: DocumentStatus
     created_at: datetime
-    class Config:
-        from_attributes = True
 
 class QueryRequest(BaseModel):
     question: str
