@@ -57,3 +57,35 @@ async def test_upload_no_file(client, auth_headers):
         headers=auth_headers
     )
     assert response.status_code == 422
+
+async def test_document_status_after_upload(client, auth_headers):
+    with patch("app.api.routes.documents.process_document_task") as mock_task:
+        mock_task.delay = lambda *args, **kwargs: None
+        upload = await client.post(
+            "/documents/upload",
+            files={"file": ("status_test.pdf", io.BytesIO(b"%PDF-1.4 test"), "application/pdf")},
+            headers=auth_headers
+        )
+    assert upload.status_code == 200
+    document_id = upload.json()["id"]
+    response = await client.get(f"/documents/{document_id}/status", headers=auth_headers)
+    assert response.status_code == 200
+
+async def test_delete_document_requires_auth(client):
+    response = await client.delete("/documents/1")
+    assert response.status_code == 401
+
+async def test_delete_nonexistent_document(client, auth_headers):
+    response = await client.delete("/documents/99999", headers=auth_headers)
+    assert response.status_code == 404
+
+async def test_upload_large_filename(client, auth_headers):
+    with patch("app.api.routes.documents.process_document_task") as mock_task:
+        mock_task.delay = lambda *args, **kwargs: None
+        long_name = "a" * 100 + ".pdf"
+        response = await client.post(
+            "/documents/upload",
+            files={"file": (long_name, io.BytesIO(b"%PDF-1.4 test"), "application/pdf")},
+            headers=auth_headers
+        )
+    assert response.status_code == 200

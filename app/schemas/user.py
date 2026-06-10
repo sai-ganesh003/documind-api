@@ -1,8 +1,17 @@
 from pydantic import BaseModel, ConfigDict
 
+from pydantic import BaseModel, ConfigDict, field_validator
+
 class RegisterRequest(BaseModel):
     email: str
     password: str
+
+    @field_validator("password")
+    @classmethod
+    def password_must_not_be_empty(cls, v):
+        if not v.strip():
+            raise ValueError("password must not be empty")
+        return v
 
 class LoginRequest(BaseModel):
     email: str

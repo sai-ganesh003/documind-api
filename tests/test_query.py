@@ -56,3 +56,27 @@ async def test_query_nonexistent_document(client, auth_headers):
         headers=auth_headers
     )
     assert response.status_code == 404
+
+async def test_query_whitespace_only_question(client, auth_headers):
+    response = await client.post(
+        "/query/",
+        json={"question": "   ", "document_id": 1},
+        headers=auth_headers
+    )
+    assert response.status_code == 422
+
+async def test_query_missing_document_id(client, auth_headers):
+    response = await client.post(
+        "/query/",
+        json={"question": "What is this about?"},
+        headers=auth_headers
+    )
+    assert response.status_code == 422
+
+async def test_query_missing_question(client, auth_headers):
+    response = await client.post(
+        "/query/",
+        json={"document_id": 1},
+        headers=auth_headers
+    )
+    assert response.status_code == 422
